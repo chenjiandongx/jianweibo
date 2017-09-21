@@ -29,7 +29,7 @@ class RegistrationForm(FlaskForm):
                                     Email()])
     username = StringField('用户名',
                            validators=[DataRequired(),
-                                       Length(1, 64)])
+                                       Length(1, 16)])
     password = PasswordField('密码',
                              validators=[DataRequired(),
                                          EqualTo('password_confirm',
@@ -54,3 +54,16 @@ class RegistrationForm(FlaskForm):
         """
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('该用户名已被使用')
+
+
+class ChangePasswordForm(FlaskForm):
+    """
+    修改密码表单
+    """
+    old_password = PasswordField('原密码',
+                                 validators=[DataRequired(),
+                                             Length(1, 64)])
+    new_password = PasswordField('新密码',
+                                 validators=[DataRequired(),
+                                             Length(1, 64)])
+    submit = SubmitField('提交')
