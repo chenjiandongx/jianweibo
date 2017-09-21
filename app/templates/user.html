@@ -6,13 +6,9 @@
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=240) }}">
         <div class="profile-header">
             <h1>{{ user.username }}</h1>
-            {% if user.name or user.location %}
-                <p>
-                    {% if user.name %}{{ user.name }}{% endif %}
-                    {% if user.location %}
-                        地区: {{ user.location }}
-                    {% endif %}
-                </p>
+            <p>性别: {{ user.sex }}</p>
+            {% if user.location %}
+                <p>地区: {{ user.location }}</p>
             {% endif %}
             {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
                 <p>账户注册时间 {{ user.member_since.strftime('%Y-%m-%d %H:%M:%S') }}</p>

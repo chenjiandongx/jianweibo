@@ -135,7 +135,6 @@ def delete(id):
     if current_user != _post.author and not current_user.can(Permission.ADMINISTER):
         abort(403)
     db.session.delete(_post)
-    db.session.commit()
     flash('您已删除该微博')
     return redirect(url_for('.index'))
 
@@ -147,13 +146,24 @@ def edit_profile():
     """
     form = EditProfileForm()
     if form.validate_on_submit():
+        if form.username.data != current_user.username and \
+                User.query.filter_by(username=form.username.data).first():
+            flash('该用户名已被使用')
+            return redirect(url_for('.edit_profile'))
+        current_user.username = form.username.data
+        current_user.realname = form.realname.data
         current_user.location = form.location.data
         current_user.about_me = form.about_me.data
+        current_user.sex = form.sex.data
         db.session.add(current_user)
+        db.session.commit()
         flash('您已经更新了个人资料')
         return redirect(url_for('main.user', username=current_user.username))
+    form.username.data = current_user.username
+    form.realname.data = current_user.realname
     form.location.data = current_user.location
     form.about_me.data = current_user.about_me
+    form.sex.data = current_user.sex
     return render_template('edit_profile.html', form=form)
 
 

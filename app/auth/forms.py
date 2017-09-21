@@ -11,9 +11,7 @@ class LoginForm(FlaskForm):
     登录表单
     """
     email = StringField('邮箱',
-                        validators=[DataRequired(),
-                                    Length(1, 64),
-                                    Email()])
+                        validators=[DataRequired(), Length(1, 64), Email()])
     password = PasswordField('密码', validators=[DataRequired()])
     remember_me = BooleanField('保持登录状态')
     submit = SubmitField('登录')
@@ -24,12 +22,9 @@ class RegistrationForm(FlaskForm):
     注册表单
     """
     email = StringField('邮箱',
-                        validators=[DataRequired(),
-                                    Length(1, 64),
-                                    Email()])
+                        validators=[DataRequired(), Length(1, 64), Email()])
     username = StringField('用户名',
-                           validators=[DataRequired(),
-                                       Length(1, 16)])
+                           validators=[DataRequired(), Length(1, 16)])
     password = PasswordField('密码',
                              validators=[DataRequired(),
                                          EqualTo('password_confirm',
@@ -61,9 +56,7 @@ class ChangePasswordForm(FlaskForm):
     修改密码表单
     """
     old_password = PasswordField('原密码',
-                                 validators=[DataRequired(),
-                                             Length(1, 64)])
+                                 validators=[DataRequired(), Length(1, 64)])
     new_password = PasswordField('新密码',
-                                 validators=[DataRequired(),
-                                             Length(1, 64)])
+                                 validators=[DataRequired(), Length(1, 64)])
     submit = SubmitField('提交')
