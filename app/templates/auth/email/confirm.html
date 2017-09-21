@@ -1,0 +1,15 @@
+<h1>
+    亲爱的 {{ user.username }},
+</h1>
+<br><br>
+<h3>
+    欢迎来到 <b>简微博</b>!
+</h3>
+<br>
+<p>
+    请确认您的账户<a href="{{ url_for('auth.confirm', token=token, _external=True) }}">点击这里</a>.
+</p>
+
+<p>感谢您的支持和理解</p>
+<p>来自简微博团队</p>
+<p><small>您可以放心访问该链接，不会追踪您的任何信息</small></p>

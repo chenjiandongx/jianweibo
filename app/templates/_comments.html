@@ -1,0 +1,37 @@
+<ul class="comments">
+    {% for comment in comments %}
+        <li class="comment">
+            <div class="comment-thumbnail">
+                <a href="{{ url_for('.user', username=comment.author.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=40) }}">
+                </a>
+            </div>
+            <div class="comment-content">
+                <div class="comment-date">{{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                <div class="comment-author">
+                    <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                </div>
+                <div class="comment-body">
+                    {% if comment.disabled %}
+                        <p><i>该评论已经被管理员屏蔽</i></p>
+                    {% endif %}
+                    {% if moderate or not comment.disabled %}
+                        {{ comment.body }}
+                    {% endif %}
+                </div>
+                {% if moderate %}
+                    <br>
+                    {% if comment.disabled %}
+                        <a class="btn btn-default btn-xs" href="{{ url_for('.moderate_enable', id=comment.id, page=page) }}">
+                            恢复评论
+                        </a>
+                    {% else %}
+                        <a class="btn btn-danger btn-xs" href="{{ url_for('.moderate_disable', id=comment.id, page=page) }}">
+                            屏蔽评论
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}简微博 - 账户确认{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        亲爱的 {{ current_user.username }}!
+    </h1>
+    <h3>您目前还没有确认您的账户</h3>
+    <p>
+        在登录本网站之前您应先确认您的账户。
+        请检查您的收件箱，我们已将确认邮件发送至您的邮箱了！
+    </p>
+    <p>
+        是否需要重新发送一次？
+        <a href="{{ url_for('auth.resend_confirmation') }}">需要请点击</a>
+    </p>
+</div>
+{% endblock %}

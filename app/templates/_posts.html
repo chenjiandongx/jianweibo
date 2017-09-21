@@ -1,0 +1,40 @@
+<ul class="posts">
+    {% for post in posts %}
+        <li class="post">
+            <div class="profile-thumbnail">
+                <a href="{{ url_for('.user', username=post.author.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
+                </a>
+            </div>
+            <div class="post-content">
+                <div class="post-date">{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                <div class="post-author">
+                    <a href="{{ url_for('.user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </div>
+                <div class="post-body">{{ post.body }}</div>
+            </div>
+            <div class="post-footer">
+                <a href="{{ url_for('.post', id=post.id) }}">
+                    <span class="label label-default">详细</span>
+                </a>
+                {% if current_user.is_authenticated %}
+                    {% if current_user == post.author %}
+                        <a href="{{ url_for('.edit', id=post.id) }}"><span class="label label-primary">编辑</span> </a>
+                        <a href="{{ url_for('.post', id=post.id) }}">
+                            <span class="label label-primary">{{ post.comments.count() }} 评论</span>
+                        </a>
+                        <a href="{{ url_for('.delete', id=post.id) }}"><span class="label label-primary">删除</span> </a>
+                    {% elif current_user.is_administrator %}
+                        <a href="{{ url_for('.edit', id=post.id) }}"><span class="label label-danger">编辑[管理员]</span> </a>
+                        <a href="{{ url_for('.post', id=post.id) }}">
+                            <span class="label label-danger">{{ post.comments.count() }} 评论</span>
+                        </a>
+                        <a href="{{ url_for('.delete', id=post.id) }}"><span class="label label-danger">删除[管理员]</span> </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>
