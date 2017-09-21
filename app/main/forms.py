@@ -61,13 +61,19 @@ class EditProfileAdminForm(FlaskForm):
         self.user = user
 
     def validate_email(self, filed):
-        """ 验证邮箱是否已被注册。魔法方法 """
+        """ 验证邮箱是否已被注册。魔法方法
+
+        :param filed: 邮箱数据
+        """
         if filed.data != self.user.email and \
                 User.query.filter_by(email=filed.data).first():
             raise ValidationError('该邮箱已经被注册')
 
     def validate_username(self, filed):
-        """ 验证用户名是否已被使用。魔法方法 """
+        """ 验证用户名是否已被使用。魔法方法
+
+        :param filed: 用户名数据
+        """
         if filed.data != self.user.username and \
                 User.query.filter_by(username=filed.data).first():
             raise ValidationError('该用户名已被使用')

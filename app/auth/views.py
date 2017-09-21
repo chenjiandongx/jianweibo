@@ -8,9 +8,10 @@ from ..email import send_mail
 from .forms import LoginForm, RegistrationForm
 
 
-@auth.route('/login', methods=['POST', 'GET'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
-    """ 登录 """
+    """ 登录账户
+    """
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -24,15 +25,17 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-    """ 登出 """
+    """ 登出账户
+    """
     logout_user()
     flash('您已退出登录')
     return redirect(url_for('main.index'))
 
 
-@auth.route('/register', methods=['POST', 'GET'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
-    """ 注册 """
+    """ 注册账户
+    """
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email=form.email.data,
@@ -52,7 +55,8 @@ def register():
 
 @auth.before_app_request
 def before_request():
-    """ 登录预处理 """
+    """ 登录预处理
+    """
     if current_user.is_authenticated:
         current_user.update_last_seen()
         if not current_user.confirmed and request.endpoint[:5] != 'auth.':
@@ -62,7 +66,10 @@ def before_request():
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
-    """ 账户验证 """
+    """ 账户验证
+
+    :param token: 密令
+    """
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
@@ -74,7 +81,8 @@ def confirm(token):
 
 @auth.route('/unconfirmed')
 def unconfirmed():
-    """ 账户未确认 """
+    """ 账户未确认
+    """
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
@@ -83,7 +91,8 @@ def unconfirmed():
 @auth.route('/confirm')
 @login_required
 def resend_confirmation():
-    """ 账户再确认 """
+    """ 账户再确认
+    """
     token = current_user.generate_confirmation_token()
     send_mail(current_user.email,
               '确认您的账户',

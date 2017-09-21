@@ -11,15 +11,15 @@ from . import db, login_manager
 
 class Role(db.Model):
     """
-    角色模型
+    角色模型，三种角色类型 <普通用户 User> <协管员 Moderator> <管理员 Administrator>
     """
     __tablename__ = 'roles'     # 数据库表名
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
-    default = db.Column(db.Boolean, default=False, index=True)
-    permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    id = db.Column(db.Integer, primary_key=True)                    # 角色 id
+    name = db.Column(db.String, unique=True)                        # 角色名
+    default = db.Column(db.Boolean, default=False, index=True)      # 角色属性是否默认，默认为`普通用户`
+    permissions = db.Column(db.Integer)                             # 角色权限
+    users = db.relationship('User', backref='role', lazy='dynamic') # 用户
 
     @staticmethod
     def insert_roles():
@@ -43,8 +43,8 @@ class Role(db.Model):
             if role is None:
                 role = Role(name=r)
             role.permissions = roles[r][0]
-            role.default = roles[r][1]
-            db.session.add(role)
+            role.default = roles[r][1]          # 默认为普通用户
+            db.session.add(role)                # 更新数据库
         db.session.commit()
 
     def __repr__(self):
@@ -57,8 +57,11 @@ class Follow(db.Model):
     """
     __tablename = 'follows'     # 数据库表名
 
+    # 用户关注的人 id
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    # 用户粉丝 id
     followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    # 关注时间
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -71,77 +74,94 @@ class User(UserMixin, db.Model):
 
         self.set_follow(self)       # 用户自己关注自己，使用户可以在关注者微博中看到自己微博
         if self.role is None:
+            # 确定管理员
             if self.email == current_app.config['FLASK_ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
+            # 如果没有赋予角色则设置为`普通用户`
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
+        # 根据用户邮箱确定头像哈希值
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
 
     __tablename__ = 'users'     # 数据库表名
 
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(64), unique=True, index=True)
-    username = db.Column(db.String, unique=True, index=True)
-    realname = db.Column(db.String(64))
-    sex = db.Column(db.String, default='男')
-    password_hash = db.Column(db.String(128))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    confirmed = db.Column(db.Boolean, default=False)
-    location = db.Column(db.String(64))
-    about_me = db.Column(db.Text())
-    member_since = db.Column(db.DateTime, default=datetime.utcnow)
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    avatar_hash = db.Column(db.String(32))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    id = db.Column(db.Integer, primary_key=True)                        # 用户 id
+    email = db.Column(db.String(64), unique=True, index=True)           # 邮箱
+    username = db.Column(db.String, unique=True, index=True)            # 用户名
+    realname = db.Column(db.String(64))                                 # 真实姓名
+    sex = db.Column(db.String, default='男')                            # 性别
+    password_hash = db.Column(db.String(128))                           # 密码哈希值
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))          # 角色 id
+    confirmed = db.Column(db.Boolean, default=False)                    # 是否保持登录
+    location = db.Column(db.String(64))                                 # 地区
+    about_me = db.Column(db.Text())                                     # 个人简介
+    member_since = db.Column(db.DateTime, default=datetime.utcnow)      # 注册时间
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)         # 最新登录时间
+    avatar_hash = db.Column(db.String(32))                              # 头像哈希值
+    posts = db.relationship('Post', backref='author', lazy='dynamic')   # 微博<关系>
 
-    # 用户关注的人
+    # 用户关注的人<关系>
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],       # 在 Follow 模型中自引用
                                backref=db.backref('follower', lazy='joined'),   # join 立即加载所有相关对象
                                lazy='dynamic',
                                cascade='all, delete-orphan')            # 删除所有记录
-    # 用户的粉丝
+    # 用户的粉丝<关系>
     followers = db.relationship('Follow',
                                 foreign_keys=[Follow.followed_id],      # 在 Follow 模型中自引用
                                 backref=db.backref('followed', lazy='joined'),  # join 立即加载所有相关对象
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')           # 删除所有记录
-    # 微博的评论
+    # 微博的评论<关系>
     comments = db.relationship('Comment',
                                backref='author',
                                lazy='dynamic')
 
     def set_follow(self, user):
-        """ 设置关注用户 """
+        """ 设置关注用户
+
+        :param user: 指定用户
+        """
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             db.session.add(f)
 
     def set_unfollow(self, user):
-        """ 设置取消关注用户 """
+        """ 设置取消关注用户
+
+        :param user: 指定用户
+        """
         f = self.followed.filter_by(followed_id=user.id).first()
         if f:
             # 从 follows 表中删除该关注关系
             db.session.delete(f)
 
     def is_following(self, user):
-        """ 是否关注某用户 """
+        """ 是否关注某用户
+
+        :param user: 指定用户
+        :return: 已关注返回 True，反之返回 False
+        """
         if self.followed.filter_by(followed_id=user.id).first():
             return True
         return False
 
     def is_followed_by(self, user):
-        """ 是否被某用户关注 """
+        """ 是否被某用户关注
+
+        :param user: 指定用户
+        :return: 已关注返回 True，反之返回 False
+        """
         if self.followers.filter_by(follower_id=user.id).first():
             return True
         return False
 
     @property
     def followed_posts(self):
-        """ 关注者微博列表
+        """查询关注者微博列表，使用了联结操作，通过 user.id 链接 follow, post 两个数据表
 
-        使用了联结操作，通过 user.id 链接 follow, post 两个数据表
+        :return: 关注者微博列表
         """
         return Post.query.join(
             Follow, Follow.followed_id == Post.author_id).filter(
@@ -149,28 +169,44 @@ class User(UserMixin, db.Model):
 
     @property
     def password(self):
-        """ 密码属性不可被访问 """
+        """ 密码属性不可被访问
+        """
         raise AttributeError('密码不可访问')
 
     @password.setter
     def password(self, password):
-        """ 密码属性可写不可读 """
+        """ 密码属性可写不可读
+
+        :param password: 用户密码
+        """
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        """ 密码验证 """
+        """ 密码验证
+
+        :param password: 用户密码
+        :return: 验证成功返回 True，反之返回 False
+        """
         return check_password_hash(self.password_hash, password)
 
     def generate_confirmation_token(self, expiration=3600):
-        """ 生成用于确认身份的密令，有效时间为 3600 秒，即 1 个小时 """
+        """ 生成用于确认身份的密令
+
+        :param expiration: 密令有效时间，单位秒
+        :return: 验证密令
+        """
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id})
 
     def confirm(self, token):
-        """ 利用密令确认账户 """
+        """ 利用密令确认账户
+
+        :param token: 验证密令
+        :return:
+        """
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(token)
+            data = s.loads(token)   # 解密密令
         except:
             return False
         if data.get('confirm') != self.id:
@@ -181,24 +217,36 @@ class User(UserMixin, db.Model):
 
     def can(self, permissions):
         """ 权限判断
-
         利用逻辑运算符 &，如果经过 & 运算后仍为原先权限常量值，即确定用于拥有该权限。
+
+        :param permissions: 指定权限
+        :return: 验证成功返回 True，反之返回 False
         """
         return self.role is not None and \
                (self.role.permissions & permissions) == permissions
 
     @property
     def is_administrator(self):
-        """ 判断是否为管理员 """
+        """ 判断是否为管理员
+
+        :return: 是管理员返回 True，反之返回 False
+        """
         return self.can(Permission.ADMINISTER)
 
     def update_last_seen(self):
-        """ 更新用于最近一次登录时间 """
+        """ 更新用于最近一次登录时间
+        """
         self.last_seen = datetime.utcnow()
         db.session.add(self)
 
     def gravatar(self, size=100, default='identicon', rating='g'):
-        """ 利用哈希值生成头像 """
+        """ 利用哈希值生成头像
+
+        :param size: 头像大小
+        :param default:
+        :param rating:
+        :return: 头像链接
+        """
         if request.is_secure:       # https 类型
             url = 'https://secure.gravatar.com/avatar'
         else:                       # http 类型
@@ -210,7 +258,8 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def add_self_follows():
-        """ 使用户关注自己，这样便可以在关注者微博中看到自己的微博 """
+        """ 使用户关注自己，这样便可以在关注者微博中看到自己的微博
+        """
         for user in User.query.all():
             if not user.is_following(user):
                 user.set_follow(user)
@@ -226,11 +275,19 @@ class AnonymousUser(AnonymousUserMixin):
     匿名用户（游客）模型
     """
     def can(self, permissions):
-        """ 游客没有任何权限 """
+        """ 游客没有任何权限
+
+        :param permissions: 指定权限
+        :return: 无任何权限
+        """
         return False
 
-    def is_anonymous(self):
-        """ 判断是否为游客 """
+    @property
+    def is_administrator(self):
+        """ 判断是或否为管理员
+
+        :return: 非管理员
+        """
         return False
 
 
@@ -239,7 +296,11 @@ login_manager.anonymous_user = AnonymousUser    # 将未登录用户赋予游客
 
 @login_manager.user_loader
 def load_user(user_id):
-    """ Flask-Login 回调函数，用于指定标识符加载用户 """
+    """ Flask-Login 回调函数，用于指定标识符加载用户
+
+    :param user_id: 用户 id
+    :return: 查询到的用户对象
+    """
     return User.query.get(int(user_id))
 
 
@@ -249,11 +310,11 @@ class Post(db.Model):
     """
     __tablename__ = 'posts'     # 数据库表名
 
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    id = db.Column(db.Integer, primary_key=True)                                # 微博 id
+    body = db.Column(db.Text)                                                   # 微博内容
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)     # 发布时间
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))                # 作者 id
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')       # 评论
 
 
 class Comment(db.Model):
@@ -262,12 +323,12 @@ class Comment(db.Model):
     """
     __tablename__ = 'comments'      # 数据库表名
 
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    disabled = db.Column(db.Boolean)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    id = db.Column(db.Integer, primary_key=True)                                # 评论 id
+    body = db.Column(db.Text)                                                   # 评论内容
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)     # 评论时间
+    disabled = db.Column(db.Boolean)                                            # 是否被屏蔽
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))                # 作者 id
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))                  # 微博 id
 
 
 class Permission:

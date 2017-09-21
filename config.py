@@ -3,6 +3,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    """
+    配置基类
+    """
     SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;OPFG=0'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True        # 每次关闭会话都保存提交
     SQLALCHEMY_TRACK_MODIFICATIONS = False      # 数据库变化追踪
@@ -10,6 +13,9 @@ class Config:
 
 
 class DevelopmentConfig(Config):
+    """
+    开发状态
+    """
     DEBUG = True
     MAIL_USE_SSL = True
     MAIL_SERVER = 'smtp.qq.com'
@@ -24,12 +30,18 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    """
+    测试状态
+    """
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test.sqlite')
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data.sqlite')
+    """
+    生产状态
+    """
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-prod.sqlite')
 
 
 config = {

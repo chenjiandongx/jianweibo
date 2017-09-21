@@ -7,7 +7,11 @@ from .models import Permission
 
 
 def permission_required(permission):
-    """ 权限验证装饰器 """
+    """ 权限验证装饰器
+
+    :param permission: 指定权限
+    :return: 装饰器
+    """
     def decorator(f):
         @wraps(f)
         def inner(*args, **kwargs):
@@ -19,5 +23,9 @@ def permission_required(permission):
 
 
 def admin_required(f):
-    """ 管理员权限验证 """
+    """ 管理员权限验证
+
+    :param f: 视图方法
+    :return: 装饰器
+    """
     return permission_required(Permission.ADMINISTER)(f)

@@ -43,7 +43,6 @@ class RegistrationForm(FlaskForm):
         extra `Form.validate_<fieldname>` validators to the field validator.
 
         :param field: 表单邮箱数据
-        :return:
         """
         if User.query.filter_by(email=field.data).first():
             raise ValidationError('该邮箱已被注册')
@@ -52,7 +51,6 @@ class RegistrationForm(FlaskForm):
         """ 验证用户名是否已被使用。如上，同为魔法方法。
 
         :param field: 表单用户名数据
-        :return:
         """
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('该用户名已被使用')

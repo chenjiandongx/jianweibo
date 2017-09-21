@@ -9,9 +9,10 @@ from ..decorators import admin_required, permission_required
 from ..models import User, Role, Post, Permission, Comment
 
 
-@main.route('/', methods=['POST', 'GET'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
-    """ 首页 """
+    """ 视图首页，发表微博
+    """
     form = PostForm()
     if form.validate_on_submit() and current_user.can(Permission.WRITE_ARTICLES):
         _post = Post(body=form.body.data,
@@ -39,7 +40,8 @@ def index():
 @main.route('/all')
 @login_required
 def show_all():
-    """ 显示所有用户微博 """
+    """ 显示所有用户微博
+    """
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_followed', '', max_age=30*24*60*60)
     return resp
@@ -48,7 +50,8 @@ def show_all():
 @main.route('/followed')
 @login_required
 def show_followed():
-    """ 仅显示关注着微博 """
+    """ 仅显示关注着微博
+    """
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
     return resp
@@ -56,7 +59,10 @@ def show_followed():
 
 @main.route('/user/<username>')
 def user(username):
-    """ 查看指定用户信息 """
+    """ 查看指定用户信息
+
+    :param username: 指定用户
+    """
     _user = User.query.filter_by(username=username).first()
     if _user is None:
         abort(404)
@@ -72,7 +78,10 @@ def user(username):
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
-    """ 发表微博 """
+    """ 发表评论
+
+    :param id: 微博 id
+    """
     _post = Post.query.get_or_404(id)
     form = CommentForm()
     if form.validate_on_submit():
@@ -98,7 +107,10 @@ def post(id):
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit(id):
-    """ 更新微博 """
+    """ 更新微博
+
+    :param id: 微博 id
+    """
     _post = Post.query.get_or_404(id)
     if current_user != _post.author and not current_user.can(Permission.ADMINISTER):
         abort(403)
@@ -115,7 +127,10 @@ def edit(id):
 @main.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete(id):
-    """ 删除指定微博 """
+    """ 删除指定微博
+
+    :param id: 微博 id
+    """
     _post = Post.query.get_or_404(id)
     if current_user != _post.author and not current_user.can(Permission.ADMINISTER):
         abort(403)
@@ -125,10 +140,11 @@ def delete(id):
     return redirect(url_for('.index'))
 
 
-@main.route('/edit-profile', methods=['POST', 'GET'])
+@main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    """ 用户编辑资料 """
+    """ 用户编辑资料
+    """
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.location = form.location.data
@@ -141,11 +157,14 @@ def edit_profile():
     return render_template('edit_profile.html', form=form)
 
 
-@main.route('/edit-profile/<int:id>', methods=['POST', 'GET'])
+@main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_profile_admin(id):
-    """ 管理员编辑资料 """
+    """ 管理员编辑资料
+
+    :param id: 用户 id
+    """
     _user = User.query.get_or_404(id)
     form = EditProfileAdminForm(user=_user)
     if form.validate_on_submit():
@@ -158,7 +177,7 @@ def edit_profile_admin(id):
         _user.about_me = form.about_me.data
         db.session.add(_user)
         flash('资料已更新')
-        return redirect(url_for('.user', username=_user.username))
+        return redirect(url_for('main.user', username=_user.username))
     form.emali.data = _user.email
     form.username.data = _user.username
     form.confirmed.data = _user.confirmed
@@ -173,41 +192,51 @@ def edit_profile_admin(id):
 @login_required
 @permission_required(Permission.FOLLOW)
 def follow(username):
-    """ 关注指定用户 """
+    """ 关注指定用户
+
+    :param username: 指定用户名
+    """
     _user = User.query.filter_by(username=username).first()
     if _user is None:
         flash('该用户不存在')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index'))
     if current_user.is_following(_user):
         flash('您已经关注了该用户')
-        return redirect(url_for('.user', username=username))
-    current_user.follow(_user)
-    flash('您已经开始关注该用户')
-    return redirect(url_for('.user', username=username))
+        return redirect(url_for('main.user', username=username))
+    current_user.set_follow(_user)
+    flash('您关注了该用户')
+    return redirect(url_for('main.user', username=username))
 
 
 @main.route('/unfollow/<username>')
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollow(username):
-    """ 取消关注指定用户 """
+    """ 取消关注指定用户
+
+    :param username: 指定用户名
+    """
     _user = User.query.filter_by(username=username).first()
     if user is None:
         flash('该用户不存在')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index'))
     if current_user.is_following(_user):
-        current_user.unfollow(_user)
-        return redirect(url_for('.user', username=username))
-    return redirect(url_for('.user', username=username))
+        current_user.set_unfollow(_user)
+        flash('您已取消关注该用户')
+        return redirect(url_for('main.user', username=username))
+    return redirect(url_for('main.user', username=username))
 
 
 @main.route('/followers/<username>')
 def followers(username):
-    """ 查看指定用户关注者名单 """
+    """ 查看指定用户关注者名单
+
+    :param username: 指定用户名
+    """
     _user = User.query.filter_by(username=username).first()
     if _user is None:
         flash('该用户不存在')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     pagination = _user.followers.paginate(page, error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
@@ -215,18 +244,21 @@ def followers(username):
     return render_template('followers.html',
                            user=_user,
                            title="粉丝",
-                           endpoint=".followers",
+                           endpoint="main.followers",
                            pagination=pagination,
                            follows=follows)
 
 
 @main.route('/followed-by/<username>')
 def followed_by(username):
-    """ 查看指定用户被关注者名单 """
+    """ 查看指定用户被关注者名单
+
+    :param username: 指定用户名
+    """
     _user = User.query.filter_by(username=username).first()
     if _user is None:
         flash('该用户不存在')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     pagination = _user.followed.paginate(page, error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
@@ -234,7 +266,7 @@ def followed_by(username):
     return render_template('followers.html',
                            user=_user,
                            title="关注",
-                           endpoint=".followers",
+                           endpoint="main.followers",
                            pagination=pagination,
                            follows=follows)
 
@@ -243,7 +275,8 @@ def followed_by(username):
 @login_required
 @permission_required(Permission.MODERATE_COMMENTS)
 def moderate():
-    """ 评论管理 """
+    """ 评论管理
+    """
     page = request.args.get('page', 1, type=int)
     pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
         page=page, error_out=False)
@@ -258,11 +291,14 @@ def moderate():
 @login_required
 @permission_required(Permission.MODERATE_COMMENTS)
 def moderate_enable(id):
-    """ 恢复已屏蔽评论 """
+    """ 恢复已屏蔽评论
+
+    :param id: 评论 id
+    """
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
     db.session.add(comment)
-    return redirect(url_for('.moderate',
+    return redirect(url_for('main.moderate',
                             page=request.args.get('page', 1, type=int)))
 
 
@@ -270,9 +306,12 @@ def moderate_enable(id):
 @login_required
 @permission_required(Permission.MODERATE_COMMENTS)
 def moderate_disable(id):
-    """ 屏蔽评论 """
+    """ 屏蔽评论
+
+    :param id: 评论 id
+    """
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
     db.session.add(comment)
-    return redirect(url_for('.moderate',
+    return redirect(url_for('main.moderate',
                             page=request.args.get('page', 1, type=int)))

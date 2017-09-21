@@ -9,7 +9,8 @@ main = Blueprint('main', __name__)
 
 @main.app_context_processor
 def inject_global_variable():
-    """ 注入全局变量，在 jinja2 模板中可用 """
+    """ 注入全局变量，在 jinja2 模板中可用
+    """
     return dict(Permission=Permission,
                 current_user=current_user)
 
