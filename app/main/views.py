@@ -1,4 +1,4 @@
-from flask import (render_template, redirect, url_for,
+from flask import (render_template, redirect, url_for, current_app,
                    abort, flash, request, make_response)
 from flask_login import login_required, current_user
 
@@ -30,7 +30,8 @@ def index():
 
     page = request.args.get('page', 1, type=int)        # 默认为第 1 页
     pagination = query.order_by(Post.timestamp.desc()).paginate(
-        page, error_out=False)
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     posts = pagination.items
     return render_template('index.html',
                            form=form,
@@ -69,7 +70,8 @@ def user(username):
         abort(404)
     page = request.args.get('page', 1, type=int)
     pagination = _user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, error_out=False)
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     posts = pagination.items
     return render_template('user.html',
                            posts=posts,
@@ -96,9 +98,11 @@ def post(id):
         return redirect(url_for('.post', id=_post.id, page=-1))
     page = request.args.get('page', 1, type=int)
     if page == -1:
-        page = (_post.comments.count() - 1) / 20 + 1        # 20 为每页评论条数
+        page = (_post.comments.count() - 1) / \
+               current_app.config['FLASK_POSTS_PER_PAGE'] + 1        # 20 为每页评论条数
     pagination = _post.comments.order_by(Comment.timestamp.asc()).paginate(
-        page, error_out=False)
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     comments = pagination.items
     return render_template("post.html",
                            posts=[_post],
@@ -251,7 +255,9 @@ def followers(username):
         flash('该用户不存在')
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
-    pagination = _user.followers.paginate(page, error_out=False)
+    pagination = _user.followers.paginate(
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html',
@@ -273,7 +279,9 @@ def followed_by(username):
         flash('该用户不存在')
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
-    pagination = _user.followed.paginate(page, error_out=False)
+    pagination = _user.followed.paginate(
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html',
@@ -292,7 +300,8 @@ def moderate():
     """
     page = request.args.get('page', 1, type=int)
     pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
-        page=page, error_out=False)
+        page=page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
     comments = pagination.items
     return render_template('moderate.html',
                            comments=comments,

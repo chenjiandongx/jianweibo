@@ -10,6 +10,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASK_ADMIN = 'chenjiandongx@qq.com'
+    FLASK_POSTS_PER_PAGE = 15
     MAIL_USE_SSL = True
     MAIL_SERVER = 'smtp.qq.com'
     MAIL_PORT = 465

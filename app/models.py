@@ -72,7 +72,7 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # self.set_follow(self)       # 用户自己关注自己，使用户可以在关注者微博中看到自己微博
+        self.set_follow(self)       # 用户自己关注自己，使用户可以在关注者微博中看到自己微博
         if self.role is None:
             # 确定管理员
             if self.email == current_app.config['FLASK_ADMIN']:
@@ -280,6 +280,28 @@ class User(UserMixin, db.Model):
                 db.session.add(user)
                 db.session.commit()
 
+    @staticmethod
+    def generate_fake_users(count=100):
+        from sqlalchemy.exc import  IntegrityError
+        from random import seed
+        import forgery_py
+
+        seed()      # 随机数种子
+        for i in range(count):
+            u = User(
+                email=forgery_py.internet.email_address(),
+                username=forgery_py.internet.user_name(),
+                password=forgery_py.lorem_ipsum.word(),
+                about_me=forgery_py.lorem_ipsum.sentence(),
+                confirmed=True,
+                member_since=forgery_py.date.date(True),
+            )
+            db.session.add(u)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
     def to_json(self, posts):
         return {
             'username': self.username,
@@ -338,6 +360,23 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)     # 发布时间
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))                # 作者 id
     comments = db.relationship('Comment', backref='post', lazy='dynamic')       # 评论
+
+    @staticmethod
+    def generate_fake_posts(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        user_count = User.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            p = Post(
+                body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                timestamp=forgery_py.date.date(True),
+                author=u
+            )
+            db.session.add(p)
+            db.session.commit()
 
     def to_json(self):
         return {
