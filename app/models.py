@@ -72,7 +72,6 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.set_follow(self)       # 用户自己关注自己，使用户可以在关注者微博中看到自己微博
         if self.role is None:
             # 确定管理员
             if self.email == current_app.config['FLASK_ADMIN']:

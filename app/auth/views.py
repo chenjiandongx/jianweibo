@@ -49,6 +49,11 @@ def register():
                   template='auth/email/confirm.html',
                   user=user,
                   token=token)
+        # 自己关注自己，就可以在关注着微博列表中看到自己的微博
+        u = User.query.filter_by(email=form.email.data).first()
+        u.set_follow(u)
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for('auth.unconfirmed'))
     return render_template('auth/register.html', form=form)
 
@@ -68,7 +73,7 @@ def before_request():
 def confirm(token):
     """ 账户验证
 
-    :param token: 密令
+    :param token: 令牌
     """
     if current_user.confirmed:
         return redirect(url_for('main.index'))
