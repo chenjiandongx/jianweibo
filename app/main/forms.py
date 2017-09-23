@@ -65,3 +65,11 @@ class EditProfileAdminForm(FlaskForm):
         if filed.data != self.user.username and \
                 User.query.filter_by(username=filed.data).first():
             raise ValidationError('该用户名已被使用')
+
+
+class SearchUserForm(FlaskForm):
+    """
+    搜索用户表单
+    """
+    username = StringField('用户名', validators=[Length(0, 16)])
+    submit = SubmitField('搜索')

@@ -9,6 +9,7 @@ migrate = Migrate(app, db)
 
 
 def make_shell_context():
+    # 启动 shell 时导入所需模块
     return dict(app=app, db=db, User=User, Role=Role, Post=Post)
 
 

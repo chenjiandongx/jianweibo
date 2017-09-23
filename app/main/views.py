@@ -3,7 +3,8 @@ from flask import (render_template, redirect, url_for,
 from flask_login import login_required, current_user
 
 from . import main
-from .forms import PostForm, EditProfileForm, EditProfileAdminForm, CommentForm
+from .forms import (PostForm, EditProfileForm, EditProfileAdminForm,
+                    CommentForm, SearchUserForm)
 from .. import db
 from ..decorators import admin_required, permission_required
 from ..models import User, Role, Post, Permission, Comment
@@ -327,3 +328,17 @@ def moderate_disable(id):
     db.session.add(comment)
     return redirect(url_for('main.moderate',
                             page=request.args.get('page', 1, type=int)))
+
+
+@main.route('/search-user', methods=['GET', 'POST'])
+def search_user():
+    """ 搜索用户
+    """
+    form = SearchUserForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash('该用户不存在')
+            return redirect(url_for('main.search_user'))
+        return redirect(url_for('main.user', username=form.username.data))
+    return render_template('search_user.html', form=form)
