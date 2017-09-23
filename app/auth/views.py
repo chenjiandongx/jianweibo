@@ -83,8 +83,6 @@ def confirm(token):
 def unconfirmed():
     """ 账户未确认
     """
-    if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
 
 

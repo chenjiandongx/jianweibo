@@ -336,8 +336,8 @@ def search_user():
     """
     form = SearchUserForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None:
+        _user = User.query.filter_by(username=form.username.data).first()
+        if _user is None:
             flash('该用户不存在')
             return redirect(url_for('main.search_user'))
         return redirect(url_for('main.user', username=form.username.data))
