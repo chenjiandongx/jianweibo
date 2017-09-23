@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin, AnonymousUserMixin
-from flask import current_app, request
+from flask import current_app, request, url_for
 from . import db, login_manager
 
 
@@ -215,6 +215,20 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'],
+                       expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
+
     def can(self, permissions):
         """ 权限判断
         利用逻辑运算符 &，如果经过 & 运算后仍为原先权限常量值，即确定用于拥有该权限。
@@ -266,6 +280,15 @@ class User(UserMixin, db.Model):
                 db.session.add(user)
                 db.session.commit()
 
+    def to_json(self, posts):
+        return {
+            'username': self.username,
+            'memberSince': self.member_since,
+            'lastSeen': self.last_seen,
+            'postCount': self.posts.count(),
+            'posts': posts
+        }
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -316,6 +339,13 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))                # 作者 id
     comments = db.relationship('Comment', backref='post', lazy='dynamic')       # 评论
 
+    def to_json(self):
+        return {
+            'posTime': self.timestamp,
+            'post': self.body,
+            'authorID': self.author_id
+        }
+
 
 class Comment(db.Model):
     """
@@ -329,6 +359,14 @@ class Comment(db.Model):
     disabled = db.Column(db.Boolean)                                            # 是否被屏蔽
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))                # 作者 id
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))                  # 微博 id
+
+    def to_json(self):
+        return {
+            'postTime': self.timestamp,
+            'post': self.body,
+            'postID': self.post_id,
+            'authorID': self.author_id
+        }
 
 
 class Permission:

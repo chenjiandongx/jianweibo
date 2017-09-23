@@ -30,10 +30,13 @@ def create_app(config_name):
     mail.init_app(app)
     login_manager.init_app(app)
 
-    from .main import main as main_buleprint        # 注册 main 蓝图
-    from .auth import auth as auth_buleprint        # 注册 auth 蓝图
+    from .main import main as main_buleprint            # 注册 main 蓝图
+    from .auth import auth as auth_buleprint            # 注册 auth 蓝图
+    from .api_v1_0 import api as api_v1_0_buleprint     # 注册 api_v1.0 蓝图
     app.register_blueprint(main_buleprint)
     app.register_blueprint(auth_buleprint, url_prefix='/auth')  # 所有 url 使用 auth 前缀
+    app.register_blueprint(api_v1_0_buleprint, url_prefix='/api/v1.0')
+
     return app
 
 

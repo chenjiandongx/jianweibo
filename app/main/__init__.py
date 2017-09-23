@@ -3,7 +3,6 @@ from flask_login import current_user
 
 from ..models import Permission
 
-# 注册 main 蓝图
 main = Blueprint('main', __name__)
 
 

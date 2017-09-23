@@ -88,12 +88,14 @@ def post(id):
         comment = Comment(body=form.body.data,
                           post=_post,
                           author=current_user._get_current_object())
+        # comment 的 author 字段不能直接设置为 current_user，因为这个变量是上下文代理
+        # 对象。真正的 User 对象要使用 current_user._get_current_object() 获取
         db.session.add(comment)
         flash('您已经成功提交评论')
         return redirect(url_for('.post', id=_post.id, page=-1))
     page = request.args.get('page', 1, type=int)
     if page == -1:
-        page = (_post.comments.count() - 1) / 20 + 1
+        page = (_post.comments.count() - 1) / 20 + 1        # 20 为每页评论条数
     pagination = _post.comments.order_by(Comment.timestamp.asc()).paginate(
         page, error_out=False)
     comments = pagination.items
