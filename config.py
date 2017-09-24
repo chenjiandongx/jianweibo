@@ -54,13 +54,12 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-prod.sqlite')
 
 
-class HerokuConfig(ProductionConfig):
+class HerokuConfig(Config):
     """
     Heroku平台配置
     """
     SSL_DISABLE = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                              'sqlite:///' + os.path.join(here, 'data-prod.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     @classmethod
     def init_app(cls, app):

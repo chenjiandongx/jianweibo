@@ -3,7 +3,7 @@ from app.models import User, Role, Post
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
-app = create_app('default')
+app = create_app('heroku')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
@@ -22,7 +22,10 @@ def deploy():
     """ 部署命令
     """
     from flask_migrate import upgrade
+    from app.models import User, Role
     upgrade()
+    Role.insert_roles()
+    User.add_self_follows()
 
 
 if __name__ == "__main__":
