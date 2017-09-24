@@ -25,5 +25,14 @@ def deploy():
     upgrade()
 
 
+@manager.command
+def generate_data():
+    """ 生成用户
+    """
+    user = User.query.filter_by(email='chenjiandongx@qq.com').first()
+    user.role = Role.query.filter_by(permissions=0xff).first()
+    User.generate_fake_users(100)
+    Post.generate_fake_posts(200)
+
 if __name__ == "__main__":
     manager.run()
