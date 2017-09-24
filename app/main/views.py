@@ -19,6 +19,7 @@ def index():
         _post = Post(body=form.body.data,
                      author=current_user._get_current_object())
         db.session.add(_post)
+        db.session.commit()
         return redirect(url_for('main.index'))
     _show_followed = False
     if current_user.is_authenticated:
@@ -94,6 +95,7 @@ def post(id):
         # comment 的 author 字段不能直接设置为 current_user，因为这个变量是上下文代理
         # 对象。真正的 User 对象要使用 current_user._get_current_object() 获取
         db.session.add(comment)
+        db.session.commit()
         flash('您已经成功提交评论')
         return redirect(url_for('.post', id=_post.id, page=-1))
     page = request.args.get('page', 1, type=int)
@@ -125,6 +127,7 @@ def edit(id):
     if form.validate_on_submit():
         _post.body = form.body.data
         db.session.add(_post)
+        db.session.commit()
         flash("微博已经更新")
         return redirect(url_for('.post', id=_post.id))
     form.body.data = _post.body
@@ -142,6 +145,7 @@ def delete(id):
     if current_user != _post.author and not current_user.can(Permission.ADMINISTER):
         abort(403)
     db.session.delete(_post)
+    db.session.commit()
     flash('您已删除该微博')
     return redirect(url_for('.index'))
 
@@ -192,6 +196,7 @@ def edit_profile_admin(id):
         _user.location = form.location.data
         _user.about_me = form.about_me.data
         db.session.add(_user)
+        db.session.commit()
         flash('资料已更新')
         return redirect(url_for('main.user', username=_user.username))
     form.username.data = _user.username
@@ -316,6 +321,7 @@ def moderate_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('main.moderate',
                             page=request.args.get('page', 1, type=int)))
 
@@ -331,6 +337,7 @@ def moderate_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('main.moderate',
                             page=request.args.get('page', 1, type=int)))
 

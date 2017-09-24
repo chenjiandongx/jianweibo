@@ -121,5 +121,6 @@ def change_password(username):
             return redirect(url_for('auth.change_password', username=username))
         _user.password = form.new_password.data
         db.session.add(_user)
+        db.session.commit()
         flash('密码修改成功')
     return render_template('auth/change_password.html', form=form)

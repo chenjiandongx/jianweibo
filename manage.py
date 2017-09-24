@@ -31,8 +31,8 @@ def generate_data():
     """
     user = User.query.filter_by(email='chenjiandongx@qq.com').first()
     user.role = Role.query.filter_by(permissions=0xff).first()
-    User.generate_fake_users(100)
-    Post.generate_fake_posts(200)
+    db.session.add(user)
+    db.session.commit()
 
 if __name__ == "__main__":
     manager.run()
