@@ -6,6 +6,7 @@ class Config:
     """
     配置基类
     """
+    SSL_DISABLE = True
     SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;OPFG=0'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -53,10 +54,31 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-prod.sqlite')
 
 
+class HerokuConfig(ProductionConfig):
+    """
+    Heroku平台配置
+    """
+    SSL_DISABLE = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+                              'sqlite:///' + os.path.join(here, 'data-prod.sqlite')
+
+    @classmethod
+    def init_app(cls, app):
+        # 将日志输出到 stderr
+        import logging
+        file_handler = logging.StreamHandler()
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
+        # 处理代理服务器首部
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
+
 config = {
     'development': DevelopmentConfig,
     'testing-empty': TestingEmptyConfig,
     'testing-full': TestingFullConfig,
     'production': ProductionConfig,
+    'heroku': HerokuConfig,
     'default': DevelopmentConfig
 }

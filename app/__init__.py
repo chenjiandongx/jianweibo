@@ -30,6 +30,10 @@ def create_app(config_name):
     mail.init_app(app)
     login_manager.init_app(app)
 
+    if app.config['SSL_DISABLE']:
+        from flask_sslify import SSLify
+        sslify = SSLify(app)
+
     from .main import main as main_buleprint            # 注册 main 蓝图
     from .auth import auth as auth_buleprint            # 注册 auth 蓝图
     from .api_v1_0 import api as api_v1_0_buleprint     # 注册 api_v1.0 蓝图
