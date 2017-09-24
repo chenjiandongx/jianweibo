@@ -22,7 +22,7 @@ def create_app(config_name):
     :param config_name: 配置类型
     :return: app 实例
     """
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     app.config.from_object(config[config_name])
 
     bootstrap.init_app(app)

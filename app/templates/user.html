@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %}
     <div class="page-header">
@@ -39,6 +39,6 @@
     <h3>微博：{{ user.username }}</h3>
     {% include "_posts.html" %}
     <div class="pagination">
-        {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+        {{ render_pagination(pagination, '.index', username=user.username) }}
     </div>
 {% endblock %}

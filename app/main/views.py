@@ -185,7 +185,6 @@ def edit_profile_admin(id):
     _user = User.query.get_or_404(id)
     form = EditProfileAdminForm(user=_user)
     if form.validate_on_submit():
-        _user.email = form.emali.data
         _user.username = form.username.data
         _user.realname = form.realname.data
         _user.confirmed = form.confirmed.data
@@ -195,7 +194,6 @@ def edit_profile_admin(id):
         db.session.add(_user)
         flash('资料已更新')
         return redirect(url_for('main.user', username=_user.username))
-    form.emali.data = _user.email
     form.username.data = _user.username
     form.confirmed.data = _user.confirmed
     form.role.data = _user.role_id

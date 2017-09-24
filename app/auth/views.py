@@ -87,6 +87,7 @@ def confirm(token):
 @auth.route('/unconfirmed')
 def unconfirmed():
     """ 账户未确认
+    账户注册以后会立即跳转到这里
     """
     return render_template('auth/unconfirmed.html')
 
