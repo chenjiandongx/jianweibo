@@ -28,12 +28,22 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-dev.sqlite')
 
 
-class TestingConfig(Config):
+class TestingEmptyConfig(Config):
     """
-    测试状态
+    测试状态：数据库无数据
     """
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test.sqlite')
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test-empty.sqlite')
+
+
+class TestingFullConfig(Config):
+    """
+    测试状态：数据库有数据
+    """
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test-full.sqlite')
 
 
 class ProductionConfig(Config):
@@ -45,7 +55,8 @@ class ProductionConfig(Config):
 
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
+    'testing-empty': TestingEmptyConfig,
+    'testing-full': TestingFullConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
 }
