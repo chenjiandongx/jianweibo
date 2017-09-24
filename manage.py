@@ -22,10 +22,7 @@ def deploy():
     """ 部署命令
     """
     from flask_migrate import upgrade
-    from app.models import User, Role
     upgrade()
-    Role.insert_roles()
-    User.add_self_follows()
 
 
 if __name__ == "__main__":
