@@ -263,7 +263,6 @@ def followers(username):
     return render_template('followers.html',
                            user=_user,
                            title="粉丝",
-                           endpoint="main.followers",
                            pagination=pagination,
                            follows=follows)
 
@@ -287,7 +286,6 @@ def followed_by(username):
     return render_template('followers.html',
                            user=_user,
                            title="关注",
-                           endpoint="main.followers",
                            pagination=pagination,
                            follows=follows)
 

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block title %}简微博 - 评论管理{% endblock %}
 
@@ -11,7 +11,7 @@
     {% include "_comments.html" %}
     {% if pagination %}
         <div class="pagination">
-            {{ macros.pagination_widget(pagination, '.moderate') }}
+            {{ render_pagination(pagination, '.moderate') }}
         </div>
     {% endif %}
 {% endblock %}

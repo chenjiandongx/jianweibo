@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% import "_macros.html" as macors %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %}
     <div class="page-header">
@@ -8,7 +8,7 @@
     </div>
     <div>
         {% if current_user.can(Permission.WRITE_ARTICLES) %}
-            {{ wtf.quick_form(form) }}
+            {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
         {% endif %}
     </div>
     <div class="post-tabs">
@@ -25,6 +25,6 @@
         {% include '_posts.html' %}
     </div>
     <div class="pagination">
-        {{ macors.pagination_widget(pagination, '.index') }}
+        {{ render_pagination(pagination, '.index') }}
     </div>
 {% endblock %}}

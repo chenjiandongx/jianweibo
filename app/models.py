@@ -287,12 +287,14 @@ class User(UserMixin, db.Model):
 
         seed()      # 随机数种子
         for i in range(count):
+            _email = forgery_py.internet.email_address()
             u = User(
-                email=forgery_py.internet.email_address(),
+                email=_email,
                 username=forgery_py.internet.user_name(),
                 password=forgery_py.lorem_ipsum.word(),
                 about_me=forgery_py.lorem_ipsum.sentence(),
                 confirmed=True,
+                avatar_hash=hashlib.md5(_email.encode('utf-8')).hexdigest(),
                 member_since=forgery_py.date.date(True),
             )
             db.session.add(u)

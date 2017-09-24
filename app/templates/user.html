@@ -16,7 +16,7 @@
             {% if current_user.is_administrator %}
             <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑资料</a>
             {% elif user == current_user %}
-                <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">编辑资料</a>
+                <a class="btn btn-primary" href="{{ url_for('.edit_profile') }}">编辑资料</a>
             {% endif %}
             {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                 {% if not current_user.is_following(user) %}

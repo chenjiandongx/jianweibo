@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block title %}简微博 - {{ title }} {{ user.username }}{% endblock %}
 
@@ -24,6 +24,6 @@
         {% endfor %}
     </table>
     <div class="pagination">
-        {{ macros.pagination_widget(pagination, endpoint, username=user.username) }}
+        {{ render_pagination(pagination, 'main.followers', username=user.username) }}
     </div>
 {% endblock %}
