@@ -6,7 +6,6 @@ class Config:
     """
     配置基类
     """
-    SSL_DISABLE = True
     SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;OPFG=0'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -38,12 +37,10 @@ class TestingEmptyConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test-empty.sqlite')
 
 
-class TestingFullConfig(Config):
+class TestingFullConfig(TestingEmptyConfig):
     """
     测试状态：数据库有数据
     """
-    TESTING = True
-    WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(here, 'data-test-full.sqlite')
 
 
