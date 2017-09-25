@@ -25,14 +25,5 @@ def deploy():
     upgrade()
 
 
-@manager.command
-def generate_data():
-    """ 生成用户
-    """
-    user = User.query.filter_by(email='chenjiandongx@qq.com').first()
-    user.role = Role.query.filter_by(permissions=0xff).first()
-    db.session.add(user)
-    db.session.commit()
-
 if __name__ == "__main__":
     manager.run()

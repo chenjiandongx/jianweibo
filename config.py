@@ -58,7 +58,7 @@ class HerokuConfig(Config):
     """
     Heroku平台配置
     """
-    SSL_DISABLE = False
+    SSL_DISABLE = False     # 启动 SLL 安全检查
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     @classmethod
@@ -68,7 +68,8 @@ class HerokuConfig(Config):
         file_handler = logging.StreamHandler()
         file_handler.setLevel(logging.WARNING)
         app.logger.addHandler(file_handler)
-        # 处理代理服务器首部
+        # 处理代理服务器首部。在 Heroku 中，客户端没有直接托管程序，而是连接反向服务
+        # 代理器，最后把请求重定向到程序上。这种连接方式中，只在代理服务器中运行 SSL 模式。
         from werkzeug.contrib.fixers import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
 

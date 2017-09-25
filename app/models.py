@@ -22,12 +22,15 @@ class Role(db.Model):
     users = db.relationship('User', backref='role', lazy='dynamic') # 用户
 
     @staticmethod
-    def insert_roles():
-        """ 静态方法，为用户指定角色 """
+    def update_roles():
+        """ 静态方法，为用户指定角色
+        如若以后权限更改，则直接执行这个函数即可
+
         # 0x00 -> 匿名：未登录用户，在程序中只有阅读权限
         # 0x07 -> 用户：具有发布文章，发表评论和关注其他用户的权限，这是新用户默认的角色
         # 0x0f -> 协管员：增加审查不当评论的权限
         # 0xff -> 管理员：具有所有权限，包括修改其他用户所属角色的权限
+        """
         roles = {
             'User': (Permission.FOLLOW |
                      Permission.COMMENT |
@@ -72,12 +75,12 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        if self.role is None:
+        if not self.role:
             # 确定管理员
             if self.email == current_app.config['FLASK_ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
             # 如果没有赋予角色则设置为`普通用户`
-            if self.role is None:
+            else:
                 self.role = Role.query.filter_by(default=True).first()
         # 根据用户邮箱确定头像哈希值
         if self.email is not None and self.avatar_hash is None:
@@ -268,16 +271,6 @@ class User(UserMixin, db.Model):
             self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=_hash, size=size, default=default, rating=rating)
-
-    @staticmethod
-    def add_self_follows():
-        """ 使用户关注自己，这样便可以在关注者微博中看到自己的微博
-        """
-        for user in User.query.all():
-            if not user.is_following(user):
-                user.set_follow(user)
-                db.session.add(user)
-                db.session.commit()
 
     @staticmethod
     def generate_fake_users(count=100):
