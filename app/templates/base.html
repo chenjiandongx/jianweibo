@@ -23,7 +23,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/">首页</a> </li>
-                    <li><a href="{{ url_for('main.search_user') }}">查找</a> </li>
+                    <li><a href="{{ url_for('main.search_user') }}">搜索</a> </li>
                     {% if current_user.can(Permission.MODERATE_COMMENTS) %}
                         <li><a href="{{ url_for('main.moderate') }}">评论管理</a></li>
                     {% endif %}
@@ -60,9 +60,5 @@
         {% endfor %}
         {% block page_content %}{% endblock %}
     </div>
-    <footer class="footer">
-        <p align="center" style="margin-top: 20px;color:#878B91;">
-            <a href="https://github.com/chenjiandongx">Copyright &copy; 2017 chenjiandongx</a>
-        </p>
-    </footer>
+    <footer class="footer"><br></footer>
 {% endblock %}

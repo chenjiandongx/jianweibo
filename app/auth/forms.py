@@ -26,10 +26,11 @@ class RegistrationForm(FlaskForm):
     username = StringField('用户名',
                            validators=[DataRequired(), Length(1, 16)])
     password = PasswordField('密码',
-                             validators=[DataRequired(),
+                             validators=[DataRequired(), Length(4, 20),
                                          EqualTo('password_confirm',
                                                  message='两次输入密码不一致')])
-    password_confirm = PasswordField('密码确认', validators=[DataRequired()])
+    password_confirm = PasswordField('密码确认',
+                                     validators=[DataRequired(), Length(4, 20)])
     submit = SubmitField('注册')
 
     def validate_email(self, field):
@@ -56,7 +57,7 @@ class ChangePasswordForm(FlaskForm):
     修改密码表单
     """
     old_password = PasswordField('原密码',
-                                 validators=[DataRequired(), Length(1, 64)])
+                                 validators=[DataRequired()])
     new_password = PasswordField('新密码',
-                                 validators=[DataRequired(), Length(1, 64)])
+                                 validators=[DataRequired(), Length(4, 20)])
     submit = SubmitField('提交')

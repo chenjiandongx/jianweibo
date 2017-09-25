@@ -91,10 +91,3 @@ div.pagination {
 .table.followers tr {
     border-bottom: 1px solid #e0e0e0;
 }
-.footer {
-  right: 0;
-  left: 0;
-  bottom: 0;
-  margin-bottom: 0;
-  border-width: 1px 0 0;
-}
