@@ -11,7 +11,7 @@ class FlaskClientTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
-        Role.insert_roles()
+        Role.update_roles()
         self.client = self.app.test_client(use_cookies=True)
 
     def tearDown(self):
@@ -25,7 +25,6 @@ class FlaskClientTestCase(unittest.TestCase):
         resp = self.client.get('/')
         resp_data = resp.get_data(as_text=True)
         self.assertTrue('您好, 陌生人' in resp_data)
-        self.assertTrue('chenjiandongx' in resp_data)
 
     def test_register_login_logout(self):
         """ 测试注册，登录，登出

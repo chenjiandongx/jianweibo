@@ -19,6 +19,7 @@ class RestfulApiTestCase(unittest.TestCase):
         """ 测试获取全部用户信息
         """
         resp = self.client.get('/api/v1.0/user')
+        print(resp.get_data(as_text=True))
         j = json.loads(resp.get_data(as_text=True))
         self.assertTrue(j[1]['id'] == 2)
         self.assertTrue(j[1]['username'] == 'Admin')
