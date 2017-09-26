@@ -6,23 +6,37 @@
 
 PC 端
 
-![pc](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc.gif)
+![pc-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-0.gif)
+![pc-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-1.gif)
 
 移动端
 
-![mobile](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile.gif)
+![mobile-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-0.gif)
+![mobile-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-1.gif)
 
 得益于 [flask-boostrap](https://github.com/mbr/flask-bootstrap)，自适应 PC 端和移动端。不过毕竟免费，部署在 Heroku 速度一般吧。
 
 
 ## 项目介绍
 
-[Flask](https://github.com/pallets/flask) 是基于 Pyhton 的 Web 开发框架，我觉得它的最大特点就是自由，框架本身提供了必备的所有内容，然后更多的功能的实现更依赖于第三方插件。也就是说，当你不满足现有的解决方案的时候你甚至可以给自己的 Web 项目动手写个增强插件来。这个项目使用了大量的第三方插件。
+[Flask](https://github.com/pallets/flask) 是基于 Pyhton 的 Web 开发框架，我觉得它的最大特点就是自由，框架本身提供了必备的所有内容，然后更多的功能的实现更依赖于第三方插件。也就是说，当你不满足现有的解决方案的时候你甚至可以给自己的 Web 项目动手写个增强插件来。
 
 了解一个框架最好的方法就是动手实现一个项目，这个项目基本上是参照 [Flask Web Development
 Developing Web Applications with Python](http://shop.oreilly.com/product/0636920031116.do) 这本书一行一行码出来的，不过对很多东西进行了修改。作者在 Github 上有这本书源码对应的仓库 [https://github.com/miguelgrinberg/flasky](https://github.com/miguelgrinberg/flasky)。
 
 不过说句实在的，这本书项目还是有些大大小小的 bug，而且有些地方其实是可以优化代码的。当你自己一行一行码出来就会知道了。直接签出源码仓库运行会发现直接就报错的 -_-! 世上无难事，只要有 Google。
+
+## 使用的第三方插件
+* [Flask-Bootstrap](https://github.com/mbr/flask-bootstrap)
+* [Flask-HTTPAuth](https://github.com/miguelgrinberg/Flask-HTTPAuth)
+* [Flask-Login](https://github.com/maxcountryman/flask-login)
+* [Flask-Mail](https://github.com/mattupstate/flask-mail)
+* [Flask-Migrate](https://github.com/miguelgrinberg/Flask-Migrate)
+* [Flask-RESTful](https://github.com/flask-restful/flask-restful)
+* [Flask-Script](https://github.com/smurfix/flask-script)
+* [Flask-SQLAlchemy](https://github.com/mitsuhiko/flask-sqlalchemy)
+* [Flask-SSLify](https://github.com/kennethreitz/flask-sslify)
+* [Flask-WTF](https://github.com/lepture/flask-wtf)
 
 
 ## RESTful API
