@@ -2,6 +2,8 @@
 
 简微博已部署在 heroku，[https://jianweibo.herokuapp.com/](https://jianweibo.herokuapp.com/)，欢迎前往体验
 
+开发环境：Windows10 + Python3
+
 PC 端
 
 ![pc](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc.gif)
@@ -10,11 +12,12 @@ PC 端
 
 ![mobile](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile.gif)
 
-得益于 flask-boostrap，自适应 PC 端和移动端。不过毕竟免费，部署在 Heroku 速度一般吧。
+得益于 [flask-boostrap](https://github.com/mbr/flask-bootstrap)，自适应 PC 端和移动端。不过毕竟免费，部署在 Heroku 速度一般吧。
+
 
 ## 项目介绍
 
-Flask 是基于 Pyhton 的 Web 开发框架，我觉得它的最大特点就是自由，框架本身提供了必备的所有内容，然后更多的功能的实现更依赖于第三方插件。也就是说，当你不满足现有的解决方案的时候你甚至可以给自己的 Web 项目动手写个增强插件来。这个项目使用了大量的第三方插件。
+[Flask](https://github.com/pallets/flask) 是基于 Pyhton 的 Web 开发框架，我觉得它的最大特点就是自由，框架本身提供了必备的所有内容，然后更多的功能的实现更依赖于第三方插件。也就是说，当你不满足现有的解决方案的时候你甚至可以给自己的 Web 项目动手写个增强插件来。这个项目使用了大量的第三方插件。
 
 了解一个框架最好的方法就是动手实现一个项目，这个项目基本上是参照 [Flask Web Development
 Developing Web Applications with Python](http://shop.oreilly.com/product/0636920031116.do) 这本书一行一行码出来的，不过对很多东西进行了修改。作者在 Github 上有这本书源码对应的仓库 [https://github.com/miguelgrinberg/flasky](https://github.com/miguelgrinberg/flasky)。
@@ -24,7 +27,7 @@ Developing Web Applications with Python](http://shop.oreilly.com/product/0636920
 
 ## RESTful API
 
-RESTful 部分是使用了 flask-restful 插件来完成的。下面是使用 httpie 在终端下的测试结果
+RESTful 部分是使用了 [flask-restful](https://github.com/flask-restful/flask-restful) 插件来完成的。下面是使用 [httpie](https://github.com/jakubroztocil/httpie) 在终端下的测试结果
 
 ### 评论
 获取全部评论信息：https://jianweibo.herokuapp.com/api/v1.0/comment
