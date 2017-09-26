@@ -7,11 +7,13 @@
 PC 端
 
 ![pc-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-0.gif)
+
 ![pc-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-1.gif)
 
 移动端
 
 ![mobile-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-0.gif)
+
 ![mobile-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-1.gif)
 
 得益于 [flask-boostrap](https://github.com/mbr/flask-bootstrap)，自适应 PC 端和移动端。不过毕竟免费，部署在 Heroku 速度一般吧。
@@ -26,7 +28,9 @@ Developing Web Applications with Python](http://shop.oreilly.com/product/0636920
 
 不过说句实在的，这本书项目还是有些大大小小的 bug，而且有些地方其实是可以优化代码的。当你自己一行一行码出来就会知道了。直接签出源码仓库运行会发现直接就报错的 -_-! 世上无难事，只要有 Google。
 
-## 使用的第三方插件
+## 插件
+项目使用的第三方插件
+
 * [Flask-Bootstrap](https://github.com/mbr/flask-bootstrap)
 * [Flask-HTTPAuth](https://github.com/miguelgrinberg/Flask-HTTPAuth)
 * [Flask-Login](https://github.com/maxcountryman/flask-login)
