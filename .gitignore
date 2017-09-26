@@ -8,7 +8,7 @@ __pycache__/
 .idea
 # Distribution / packaging
 .Python
-data-dev.sqlite
+.coverage
 data-prod.sqlite
 env/
 build/
