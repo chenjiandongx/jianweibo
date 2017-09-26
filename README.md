@@ -4,15 +4,23 @@
 
 开发环境：Windows10 + Python3
 
-PC 端
+### PC 端
+
+首页
 
 ![pc-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-0.gif)
 
+个人信息页
+
 ![pc-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-1.gif)
 
-移动端
+### 移动端
+
+首页
 
 ![mobile-0](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-0.gif)
+
+个人信息页
 
 ![mobile-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-1.gif)
 
