@@ -1,5 +1,7 @@
 # 基于 Python Flask 的微博系统
 
+[![Build Status](https://travis-ci.org/chenjiandongx/jianweibo.svg?branch=master)](https://travis-ci.org/chenjiandongx/jianweibo)
+
 简微博已部署在 heroku，[https://jianweibo.herokuapp.com/](https://jianweibo.herokuapp.com/)，欢迎前往体验
 
 开发环境：Windows10 + Python3
@@ -243,6 +245,12 @@ Via: 1.1 vegur
 }
 ```
 
+### 令牌
+通过密码获取令牌，然后就可采用令牌登录，不用提交密码
+```
+$ http https://jianweibo.herokuapp.com/api/v1.0/token --auth <your-email>:<your-password>
+```
+
 
 ## 运行程序
 新建虚拟环境
@@ -272,6 +280,7 @@ $ python manage.py runserver
 ``` shell
 $ cd app
 $ nosetests --with-coverage --cover-package=tests --verbosity=2
+
 测试获取全部评论信息 ... ok
 测试获取全部微博信息 ... ok
 测试获取全部用户信息 ... ok
