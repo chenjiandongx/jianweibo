@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/chenjiandongx/jianweibo.svg?branch=master)](https://travis-ci.org/chenjiandongx/jianweibo)
 
+![jianweibo](https://github.com/chenjiandongx/jianweibo/blob/master/images/jianweibo.png)
+
 简微博已部署在 heroku，[https://jianweibo.herokuapp.com/](https://jianweibo.herokuapp.com/)，欢迎前往体验
 
 开发环境：Windows10 + Python3
@@ -16,6 +18,11 @@
 
 ![pc-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-1.gif)
 
+注册
+
+![pc-2](https://github.com/chenjiandongx/jianweibo/blob/master/images/pc-2.png)
+
+
 ### 移动端
 
 首页
@@ -25,6 +32,10 @@
 个人信息页
 
 ![mobile-1](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-1.gif)
+
+注册
+
+![mobile-2](https://github.com/chenjiandongx/jianweibo/blob/master/images/mobile-2.png)
 
 得益于 [flask-boostrap](https://github.com/mbr/flask-bootstrap)，自适应 PC 端和移动端。不过毕竟免费，部署在 Heroku 速度一般吧。
 
